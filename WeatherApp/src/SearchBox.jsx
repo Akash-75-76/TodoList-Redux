@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import "./SearchBox.css";
 import { useState } from "react";
 
-export default function SearchBox() {
+export default function SearchBox({ updateInfo }) {
   const API_KEY = "5856e7ab8f9768a4de308a22b0e4b2d9";
   const url = "https://api.openweathermap.org/data/2.5/weather";
 
@@ -13,40 +13,41 @@ export default function SearchBox() {
     setCity(evt.target.value);
   };
 
-  const getWeatherInfo = async (cityName) => {
+  const getWeatherInfo = async () => {
     try {
       const response = await fetch(
-        `${url}?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric`
+        `${url}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
       );
-      const jsonResponse = await response.json(); 
+      const jsonResponse = await response.json();
+
       let result = {
-        city:city,
-  temp: jsonResponse.main.temp,
-  tempMin: jsonResponse.main.temp_min,
-  tempMax: jsonResponse.main.temp_max,
-  humidity: jsonResponse.main.humidity,
-  feelsLike: jsonResponse.main.feels_like,
-  weather: jsonResponse.weather[0].description,
-};
+        city: city,
+        temp: jsonResponse.main.temp,
+        tempMin: jsonResponse.main.temp_min,
+        tempMax: jsonResponse.main.temp_max,
+        humidity: jsonResponse.main.humidity,
+        feelsLike: jsonResponse.main.feels_like,
+        weather: jsonResponse.weather[0].description,
+      };
 
-console.log(result);
-
+      console.log(result);
+      return result;
     } catch (error) {
       console.error("Error fetching weather data:", error);
     }
-    
   };
 
-  const handleSubmit = (evt) => {
+  const handleSubmit = async (evt) => {
     evt.preventDefault();
-    console.log(city);
-    getWeatherInfo(city); // ✅ fix here
+    let newinfo = await getWeatherInfo();
+    if (newinfo) {
+      updateInfo(newinfo);
+    }
     setCity("");
   };
 
   return (
     <div className="SearchBox">
-      <h3>Search for the weather</h3>
       <form onSubmit={handleSubmit}>
         <TextField
           id="city"
