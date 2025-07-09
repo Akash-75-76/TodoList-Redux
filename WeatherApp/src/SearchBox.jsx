@@ -20,6 +20,7 @@ export default function SearchBox() {
       );
       const jsonResponse = await response.json(); 
       let result = {
+        city:city,
   temp: jsonResponse.main.temp,
   tempMin: jsonResponse.main.temp_min,
   tempMax: jsonResponse.main.temp_max,
